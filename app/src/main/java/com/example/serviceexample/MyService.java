@@ -89,26 +89,31 @@ public class MyService extends Service{
             // parse the json string into 'close' and 'volume' array
 
             JSONObject jsonObject = null;
+            JSONArray jsonArrayOpen = null;
             JSONArray jsonArrayClose = null;
             JSONArray jsonArrayVolume = null;
 
             try {
                 jsonObject = new JSONObject(result);
+                jsonArrayOpen = jsonObject.getJSONArray("o");
                 jsonArrayClose = jsonObject.getJSONArray("c");
                 jsonArrayVolume = jsonObject.getJSONArray("v");
             } catch (JSONException e) {e.printStackTrace();}
 
-
+            Log.i("open", String.valueOf(jsonArrayOpen.length()));
             Log.v("close", String.valueOf(jsonArrayClose.length()));
             Log.v("vol", String.valueOf(jsonArrayVolume.length()));
 
             try {
                 for (int i = 0; i < jsonArrayClose.length(); i++) {
+                    double open = jsonArrayOpen.getDouble(i);
                     double close = jsonArrayClose.getDouble(i);
                     double volume = jsonArrayVolume.getDouble(i);
-                    Log.v("data", i + ":, c: " + close + " v: " + volume);
+                    // Log.v("data", ticker + ":, o: " + open  + " c: " + close + " v: " + volume);
 
                     ContentValues values = new ContentValues();
+                    values.put(HistoricalDataProvider.TICKER, ticker);
+                    values.put(HistoricalDataProvider.OPEN, open);
                     values.put(HistoricalDataProvider.CLOSE, close);
                     values.put(HistoricalDataProvider.VOLUME, volume);
                     getContentResolver().insert(HistoricalDataProvider.CONTENT_URI, values);
