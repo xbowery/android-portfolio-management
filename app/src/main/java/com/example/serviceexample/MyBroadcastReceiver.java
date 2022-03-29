@@ -33,7 +33,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                 result.setText("Calculating...");
 
                 double sum_growth = 0.0;
-                double sum_growth_square = 0.0;
                 List<Double> rateList = new ArrayList<>();
 
                 Cursor cursor = context.getContentResolver().query(CONTENT_URI, new String[]{HistoricalDataProvider.OPEN, HistoricalDataProvider.CLOSE},
@@ -49,7 +48,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         double rate = (close - open) / open;
                         sum_growth += rate;
                         rateList.add(rate);
-                        sum_growth_square += Math.pow(rate, 2);
 
                         cursor.moveToNext();
                     }
@@ -58,8 +56,13 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                     return;
                 }
 
-                    double annualisedReturn = sum_price / sum_volume;
-                    result.setText(String.format("%.2f", annualisedReturn));
+                double average = sum_growth / rows;
+
+                double sum = 0.0;
+                for(double rate: rateList) {
+                    sum += Math.pow(rate - average, 2);
+                }
+                double sd = Math.sqrt(sum / (rows - 1));
 
                 double annualisedGrowth = average * rows;
                 double annualisedVolatility = sd * Math.sqrt(rows);

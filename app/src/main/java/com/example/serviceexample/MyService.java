@@ -83,12 +83,11 @@ public class MyService extends Service {
                 Thread.currentThread().interrupt();
             }
 
-            // parse the json string into 'close' and 'volume' array
+            // parse the json string into 'open' and 'close' array
 
             JSONObject jsonObject = null;
             JSONArray jsonArrayOpen = null;
             JSONArray jsonArrayClose = null;
-            JSONArray jsonArrayVolume = null;
 
             try {
                 jsonObject = new JSONObject(result);
@@ -100,14 +99,14 @@ public class MyService extends Service {
 
             Log.i("open", String.valueOf(jsonArrayOpen.length()));
             Log.v("close", String.valueOf(jsonArrayClose.length()));
-            Log.v("vol", String.valueOf(jsonArrayVolume.length()));
+
+            getContentResolver().delete(HistoricalDataProvider.CONTENT_URI, "ticker=?", new String[]{ticker});
 
             try {
                 for (int i = 0; i < jsonArrayClose.length(); i++) {
                     double open = jsonArrayOpen.getDouble(i);
                     double close = jsonArrayClose.getDouble(i);
-                    double volume = jsonArrayVolume.getDouble(i);
-                    // Log.v("data", ticker + ":, o: " + open  + " c: " + close + " v: " + volume);
+                    // Log.v("data", ticker + ":, o: " + open  + " c: " + close);
 
                     ContentValues values = new ContentValues();
                     values.put(HistoricalDataProvider.TICKER, ticker);
@@ -121,6 +120,7 @@ public class MyService extends Service {
 
             // broadcast message that download is complete
 
+            Log.v("data", "saved");
             Intent intent = new Intent("DOWNLOAD_COMPLETE");
             sendBroadcast(intent);
 
