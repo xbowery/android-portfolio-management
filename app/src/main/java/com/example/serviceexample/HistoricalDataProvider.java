@@ -23,6 +23,8 @@ public class HistoricalDataProvider extends ContentProvider {
     static final Uri CONTENT_URI = Uri.parse(URL);
 
     static final String ID = "id";
+    static final String TICKER = "ticker";
+    static final String OPEN = "OPEN";
     static final String CLOSE = "close";
 
     private static HashMap<String, String> HISTORY_PROJECTION_MAP;
@@ -48,6 +50,8 @@ public class HistoricalDataProvider extends ContentProvider {
     static final String CREATE_DB_TABLE =
             " CREATE TABLE " + TABLE_NAME +
                     " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " ticker VARCHAR(100) NOT NULL, " +
+                    " open DECIMAL(5,3) NOT NULL, " +
                     " close DECIMAL(5,3) NOT NULL, " +
                     " volume DECIMAL(10,1) NOT NULL);";
 
@@ -69,19 +73,22 @@ public class HistoricalDataProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
             onCreate(db);
         }
+
+        @Override
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " +  TABLE_NAME);
+            onCreate(db);
+        }
     }
 
     @Override
     public boolean onCreate() {
-
         Context context = getContext();
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         // create db if not exists
         db = dbHelper.getWritableDatabase();
         return (db == null)? false:true;
-
     }
-
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {

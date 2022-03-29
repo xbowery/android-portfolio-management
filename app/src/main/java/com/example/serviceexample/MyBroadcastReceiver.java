@@ -49,7 +49,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         sum_price += close * volume;
                         sum_volume += volume;
                         while (!cursor.isAfterLast()) {
-                            int id = cursor.getColumnIndex("id");
                             close = cursor.getDouble(cursor.getColumnIndexOrThrow("close"));
                             volume = cursor.getDouble(cursor.getColumnIndexOrThrow("volume"));
                             sum_price += close * volume;
@@ -61,8 +60,8 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         result.setText("No Records Found");
                     }
 
-                    double vwap = sum_price / sum_volume;
-                    result.setText(String.format("%.2f", vwap));
+                    double annualisedReturn = sum_price / sum_volume;
+                    result.setText(String.format("%.2f", annualisedReturn));
 
                 }
             });

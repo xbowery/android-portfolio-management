@@ -16,7 +16,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ServiceExample.NoActionBar">
+            android:theme="@style/Theme.ServiceExample.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +31,8 @@
             android:authorities="com.example.serviceexample.HistoricalDataProvider"
             android:enabled="true"></provider>
         <receiver android:name=".MyBroadcastReceiver"
-            tools:ignore="Instantiatable">
+            tools:ignore="Instantiatable"
+            android:exported="false">
             <intent-filter>
                 <action android:name="DOWNLOAD_COMPLETE"/>
             </intent-filter>
