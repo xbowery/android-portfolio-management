@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        myBroadcastReceiver = new MyBroadcastReceiver(new Handler(Looper.getMainLooper()));
+        registerReceiver(myBroadcastReceiver, new IntentFilter("CALC_START"));
+
         // set up layout
 
         setContentView(R.layout.activitymain);
@@ -51,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 result.setText("Waiting for data.. ");
-                myBroadcastReceiver = new MyBroadcastReceiver(new Handler(Looper.getMainLooper()));
-                registerReceiver(myBroadcastReceiver, new IntentFilter("DOWNLOAD_COMPLETE"));
+                Intent intent = new Intent("CALC_START");
+                sendBroadcast(intent);
             }
         });
     }
@@ -65,11 +68,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         if (myBroadcastReceiver == null) {
             return;
         }
         unregisterReceiver(myBroadcastReceiver);
     }
-
-
 }

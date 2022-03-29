@@ -31,7 +31,7 @@ public class MyService extends Service {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
 
-    private String ticker = "MSFT";
+    private String ticker = "";
     private String token = "c8so24qad3ifkeaobkjg"; // put your own token
 
     private final class ServiceHandler extends Handler {
@@ -125,7 +125,6 @@ public class MyService extends Service {
             sendBroadcast(intent);
 
             stopSelf(msg.arg1);
-
         }
     }
 
