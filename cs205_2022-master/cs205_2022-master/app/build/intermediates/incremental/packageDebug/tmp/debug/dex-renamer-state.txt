@@ -1,0 +1,4 @@
+#Tue Mar 22 18:04:16 SGT 2022
+base.0=C\:\\Users\\King Yeh\\Downloads\\cs205_2022-master\\cs205_2022-master\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
