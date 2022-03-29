@@ -1,6 +1,5 @@
 package com.example.serviceexample;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,10 +8,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
@@ -24,16 +24,25 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         if (intent.getAction().equals("DOWNLOAD_COMPLETE")) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Uri CONTENT_URI = Uri.parse("content://com.example.serviceexample.HistoricalDataProvider/history");
-                    TextView result = (TextView) ((Activity)context).findViewById(R.id.textview_result);
+                    Uri CONTENT_URI = Uri.parse(HistoricalDataProvider.URL);
+                    TextView result = (TextView) ((Activity) context).findViewById(R.id.textview_result);
+                    EditText ticker = (EditText) ((Activity) context).findViewById(R.id.edit_ticker);
                     result.setText("Calculating...");
-                    double sum_price = 0.0;
-                    double sum_volume = 0.0;
-                    Cursor cursor = context.getContentResolver().query(CONTENT_URI, null, null, null, null);
+
+                    double sum_growth = 0.0;
+                    double sum_growth_square = 0.0;
+                    List<Double> rateList = new ArrayList<>();
+
+                    Cursor cursor = context.getContentResolver().query(CONTENT_URI, new String[]{HistoricalDataProvider.OPEN, HistoricalDataProvider.CLOSE},
+                            "ticker=?", new String[]{String.valueOf(ticker.getText())}, null);
+
+                    int rows = cursor.getCount();
+
                     if (cursor.moveToFirst()) {
                         double close = cursor.getDouble(cursor.getColumnIndexOrThrow("close"));
                         double volume = cursor.getDouble(cursor.getColumnIndexOrThrow("volume"));
@@ -48,8 +57,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                             cursor.moveToNext();
                             Log.v("data", close + "");
                         }
-                    }
-                    else {
+                    } else {
                         result.setText("No Records Found");
                     }
 

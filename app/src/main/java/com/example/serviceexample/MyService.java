@@ -3,7 +3,6 @@ package com.example.serviceexample;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -17,16 +16,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class MyService extends Service{
+public class MyService extends Service {
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
 
@@ -35,20 +32,20 @@ public class MyService extends Service{
     private static final int CONNECTION_TIMEOUT = 15000;
 
     private String ticker = "MSFT";
-    private String token ="c8so24qad3ifkeaobkjg"; // put your own token
+    private String token = "c8so24qad3ifkeaobkjg"; // put your own token
 
-    private final class ServiceHandler extends Handler{
-        public ServiceHandler(Looper looper){
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
             super(looper);
         }
 
         @Override
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg) {
 
             // url to get historical data
 
-            String stringUrl = "https://finnhub.io/api/v1/stock/candle?symbol="+ticker
-                    +"&resolution=1&from=1625097601&to=1640995199&token="+token;
+            String stringUrl = "https://finnhub.io/api/v1/stock/candle?symbol=" + ticker
+                    + "&resolution=D&from=1625097601&to=1640995199&token=" + token;
             String result;
             String inputLine;
 
@@ -57,7 +54,7 @@ public class MyService extends Service{
                 // make GET requests
 
                 URL myUrl = new URL(stringUrl);
-                HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
+                HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 
                 connection.setRequestMethod(REQUEST_METHOD);
                 connection.setReadTimeout(READ_TIMEOUT);
@@ -71,7 +68,7 @@ public class MyService extends Service{
                 BufferedReader reader = new BufferedReader(streamReader);
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while((inputLine = reader.readLine()) != null){
+                while ((inputLine = reader.readLine()) != null) {
                     stringBuilder.append(inputLine);
                 }
 
@@ -80,7 +77,7 @@ public class MyService extends Service{
 
                 result = stringBuilder.toString();
 
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 result = null;
                 Thread.currentThread().interrupt();
@@ -95,8 +92,9 @@ public class MyService extends Service{
             try {
                 jsonObject = new JSONObject(result);
                 jsonArrayClose = jsonObject.getJSONArray("c");
-                jsonArrayVolume = jsonObject.getJSONArray("v");
-            } catch (JSONException e) {e.printStackTrace();}
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
             Log.v("close", String.valueOf(jsonArrayClose.length()));
@@ -110,10 +108,11 @@ public class MyService extends Service{
 
                     ContentValues values = new ContentValues();
                     values.put(HistoricalDataProvider.CLOSE, close);
-                    values.put(HistoricalDataProvider.VOLUME, volume);
                     getContentResolver().insert(HistoricalDataProvider.CONTENT_URI, values);
                 }
-            } catch (JSONException e) {e.printStackTrace();}
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             // broadcast message that download is complete
 
@@ -126,7 +125,7 @@ public class MyService extends Service{
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         HandlerThread thread = new HandlerThread("Service", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
         serviceLooper = thread.getLooper();
@@ -134,7 +133,7 @@ public class MyService extends Service{
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         ticker = intent.getStringExtra("ticker");
         Toast.makeText(this, "download starting", Toast.LENGTH_SHORT).show();
 
@@ -146,10 +145,12 @@ public class MyService extends Service{
     }
 
     @Override
-    public IBinder onBind(Intent intent){
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
     @Override
-    public void onDestroy(){ Toast.makeText(this, "download done", Toast.LENGTH_SHORT).show(); }
+    public void onDestroy() {
+        Toast.makeText(this, "download done", Toast.LENGTH_SHORT).show();
+    }
 }

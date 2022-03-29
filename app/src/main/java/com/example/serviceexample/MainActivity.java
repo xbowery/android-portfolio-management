@@ -1,32 +1,25 @@
 package com.example.serviceexample;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.serviceexample.*;
-
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private Button start, calc;
     private TextView result;
     private EditText ticker;
 
-//    Uri CONTENT_URI = Uri.parse("content://com.example.serviceexample.HistoricalDataProvider/history");
+    //    Uri CONTENT_URI = Uri.parse("content://com.example.serviceexample.HistoricalDataProvider/history");
     private BroadcastReceiver myBroadcastReceiver;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +65,9 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
+        if (myBroadcastReceiver == null) {
+            return;
+        }
         unregisterReceiver(myBroadcastReceiver);
     }
 
