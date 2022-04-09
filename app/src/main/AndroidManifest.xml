@@ -14,8 +14,7 @@
         android:theme="@style/Theme.ServiceExample">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +22,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DownloadService"></service>
-        <service android:name=".CalculateService"></service>
+        <service android:name=".DownloadService" />
+        <service android:name=".CalculateService" />
 
         <provider
             android:name=".HistoricalDataProvider"

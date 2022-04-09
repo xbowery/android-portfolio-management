@@ -33,6 +33,10 @@ public class CalculateService extends Service {
         public void handleMessage(Message msg) {
             Uri CONTENT_URI = Uri.parse(HistoricalDataProvider.URL);
             for (Ticker ticker : tickers) {
+                if (!ticker.isValid()) {
+                    continue;
+                }
+
                 Log.v("Retrieval", ticker.getTicker());
                 double sum_growth = 0.0;
                 List<Double> rateList = new ArrayList<>();
@@ -65,14 +69,15 @@ public class CalculateService extends Service {
                 }
                 double sd = Math.sqrt(sum / (rows - 1));
 
-                double annualisedReturn = average * rows;
-                double annualisedVolatility = sd * Math.sqrt(rows);
+                double annualisedReturn = average * 252;
+                double annualisedVolatility = sd * Math.sqrt(252);
 
                 Log.i("Annualised Growth", String.valueOf((int) (annualisedReturn * 100)));
                 Log.i("Annualised Volatility", String.valueOf((int) (annualisedVolatility * 100)));
 
-                ticker.setAnnualisedReturn((int) (annualisedReturn * 100));
-                ticker.setAnnualisedVolatility((int) (annualisedVolatility * 100));
+                ticker.setAnnualisedReturn(annualisedReturn * 100);
+                ticker.setAnnualisedVolatility(annualisedVolatility * 100);
+                ticker.setCalculated(true);
                 returnList.add(ticker);
             }
             sendBroadcast();

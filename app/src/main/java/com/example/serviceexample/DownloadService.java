@@ -12,6 +12,8 @@ import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,9 +47,9 @@ public class DownloadService extends Service {
             String result;
             String inputLine;
 
-            for (Ticker ticker: tickers) {
+            for (int i = 0; i < tickers.size(); i++) {
                 // url to get historical data
-                String stringUrl = "https://finnhub.io/api/v1/stock/candle?symbol=" + ticker.getTicker()
+                String stringUrl = "https://finnhub.io/api/v1/stock/candle?symbol=" + tickers.get(i).getTicker()
                         + "&resolution=D&from=1625097601&to=1640995199&token=" + token;
 
                 try {
@@ -92,6 +94,11 @@ public class DownloadService extends Service {
 
                 try {
                     jsonObject = new JSONObject(result);
+                    String s = jsonObject.getString("s");
+                    if (s.equals("no_data")) {
+                        tickers.get(i).setValid(false);
+                        continue;
+                    }
                     jsonArrayOpen = jsonObject.getJSONArray("o");
                     jsonArrayClose = jsonObject.getJSONArray("c");
                 } catch (JSONException e) {
@@ -101,16 +108,16 @@ public class DownloadService extends Service {
                 Log.i("open", String.valueOf(jsonArrayOpen.length()));
                 Log.v("close", String.valueOf(jsonArrayClose.length()));
 
-                getContentResolver().delete(HistoricalDataProvider.CONTENT_URI, "ticker=?", new String[]{ticker.getTicker()});
+                getContentResolver().delete(HistoricalDataProvider.CONTENT_URI, "ticker=?", new String[]{tickers.get(i).getTicker()});
 
                 try {
-                    for (int i = 0; i < jsonArrayClose.length(); i++) {
-                        double open = jsonArrayOpen.getDouble(i);
-                        double close = jsonArrayClose.getDouble(i);
+                    for (int j = 0; j < jsonArrayClose.length(); j++) {
+                        double open = jsonArrayOpen.getDouble(j);
+                        double close = jsonArrayClose.getDouble(j);
                         // Log.v("data", ticker + ":, o: " + open  + " c: " + close);
 
                         ContentValues values = new ContentValues();
-                        values.put(HistoricalDataProvider.TICKER, ticker.getTicker());
+                        values.put(HistoricalDataProvider.TICKER, tickers.get(i).getTicker());
                         values.put(HistoricalDataProvider.OPEN, open);
                         values.put(HistoricalDataProvider.CLOSE, close);
                         getContentResolver().insert(HistoricalDataProvider.CONTENT_URI, values);
@@ -122,16 +129,20 @@ public class DownloadService extends Service {
                 // broadcast message that download is complete
                 Log.v("Download", "saved");
             }
-
-            Intent intent = new Intent("DOWNLOAD_COMPLETE");
-            sendBroadcast(intent);
-
+            sendBroadcast();
             stopSelf(msg.arg1);
         }
     }
 
+    private void sendBroadcast() {
+        Intent intent = new Intent("download");
+        intent.putParcelableArrayListExtra("tickers", tickers);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     @Override
     public void onCreate() {
+
         HandlerThread thread = new HandlerThread("Service", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
         serviceLooper = thread.getLooper();

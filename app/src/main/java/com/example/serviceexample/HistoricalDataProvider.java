@@ -42,7 +42,6 @@ public class HistoricalDataProvider extends ContentProvider {
 
 
     // Database specific constant declarations
-
     private SQLiteDatabase db;
     static final String DATABASE_NAME = "Historical_Data";
     static final String TABLE_NAME = "history";
@@ -56,7 +55,6 @@ public class HistoricalDataProvider extends ContentProvider {
 
 
     // helper class creates repo
-
     private static class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);

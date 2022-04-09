@@ -5,8 +5,10 @@ import android.os.Parcelable;
 
 public class Ticker implements Parcelable {
     private String ticker;
-    private int annualisedReturn;
-    private int annualisedVolatility;
+    private double annualisedReturn;
+    private double annualisedVolatility;
+    private boolean isValid = true;
+    private boolean isCalculated;
 
     public Ticker() {
     }
@@ -15,7 +17,7 @@ public class Ticker implements Parcelable {
         this.ticker = ticker;
     }
 
-    public Ticker(String ticker, int annualisedReturn, int annualisedVolatility) {
+    public Ticker(String ticker, double annualisedReturn, double annualisedVolatility) {
         this.ticker = ticker;
         this.annualisedReturn = annualisedReturn;
         this.annualisedVolatility = annualisedVolatility;
@@ -23,8 +25,10 @@ public class Ticker implements Parcelable {
 
     protected Ticker(Parcel in) {
         ticker = in.readString();
-        annualisedReturn = in.readInt();
-        annualisedVolatility = in.readInt();
+        annualisedReturn = in.readDouble();
+        annualisedVolatility = in.readDouble();
+        isValid = in.readBoolean();
+        isCalculated = in.readBoolean();
     }
 
     public static final Creator<Ticker> CREATOR = new Creator<Ticker>() {
@@ -47,8 +51,10 @@ public class Ticker implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(ticker);
-        parcel.writeInt(annualisedReturn);
-        parcel.writeInt(annualisedVolatility);
+        parcel.writeDouble(annualisedReturn);
+        parcel.writeDouble(annualisedVolatility);
+        parcel.writeBoolean(isValid);
+        parcel.writeBoolean(isCalculated);
     }
 
     public String getTicker() {
@@ -59,19 +65,48 @@ public class Ticker implements Parcelable {
         this.ticker = ticker;
     }
 
-    public int getAnnualisedReturn() {
+    public double getAnnualisedReturn() {
         return annualisedReturn;
     }
 
-    public void setAnnualisedReturn(int annualisedReturn) {
+    public void setAnnualisedReturn(double annualisedReturn) {
         this.annualisedReturn = annualisedReturn;
     }
 
-    public int getAnnualisedVolatility() {
+    public double getAnnualisedVolatility() {
         return annualisedVolatility;
     }
 
-    public void setAnnualisedVolatility(int annualisedVolatility) {
+    public void setAnnualisedVolatility(double annualisedVolatility) {
         this.annualisedVolatility = annualisedVolatility;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setValid(boolean valid) {
+        isValid = valid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticker ticker1 = (Ticker) o;
+        return ticker.equals(ticker1.ticker);
+    }
+
+    @Override
+    public int hashCode() {
+        return ticker.hashCode();
+    }
+
+    public boolean isCalculated() {
+        return isCalculated;
+    }
+
+    public void setCalculated(boolean calculated) {
+        isCalculated = calculated;
     }
 }

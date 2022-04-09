@@ -2,18 +2,17 @@ package com.example.serviceexample;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -46,58 +45,65 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
     public void onBindViewHolder(@NonNull TickerAdapter.ViewHolder holder, int position) {
         Ticker data = dataList.get(position);
 
-        //set text in textview
-        holder.textViewTicker.setText(data.getTicker());
-        holder.textViewReturns.setText(String.valueOf(data.getAnnualisedReturn()));
-        holder.textViewVolatility.setText(String.valueOf(data.getAnnualisedVolatility()));
+        // set text in textview
+        if (data.isValid()) {
+            holder.textViewTicker.setText(data.getTicker());
+            holder.textViewTicker.setTextColor(Color.BLACK);
+        } else {
+            holder.textViewTicker.setText(data.getTicker() + " (Invalid)");
+            holder.textViewTicker.setTextColor(Color.RED);
+        }
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // init main data
-                Ticker d = dataList.get(holder.getAdapterPosition());
+        holder.textViewReturns.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedReturn()) : "-");
+        holder.textViewVolatility.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedVolatility()) : "-");
 
-                // create dialog
-                Dialog dialog = new Dialog(context);
-
-                // set content view
-                dialog.setContentView(R.layout.dialog_update);
-
-                // init width
-                int width = WindowManager.LayoutParams.MATCH_PARENT;
-
-                // int height
-                int height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-                // set layout
-                dialog.getWindow().setLayout(width, height);
-
-                // show dialog
-                dialog.show();
-
-                // init and assign variable
-                EditText editText = dialog.findViewById(R.id.edit_text);
-                Button btUpdate = dialog.findViewById(R.id.btn_update);
-
-                // set text on edit text
-                editText.setText(d.getTicker());
-
-                btUpdate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        // dismiss dialog
-                        dialog.dismiss();
-
-                        //get update text from edit text
-                        String newTicker = editText.getText().toString().trim();
-                        d.setTicker(newTicker);
-
-                        notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+//        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // init main data
+//                Ticker d = dataList.get(holder.getAdapterPosition());
+//
+//                // create dialog
+//                Dialog dialog = new Dialog(context);
+//
+//                // set content view
+//                dialog.setContentView(R.layout.dialog_update);
+//
+//                // init width
+//                int width = WindowManager.LayoutParams.MATCH_PARENT;
+//
+//                // int height
+//                int height = WindowManager.LayoutParams.WRAP_CONTENT;
+//
+//                // set layout
+//                dialog.getWindow().setLayout(width, height);
+//
+//                // show dialog
+//                dialog.show();
+//
+//                // init and assign variable
+//                EditText editText = dialog.findViewById(R.id.edit_text);
+//                Button btUpdate = dialog.findViewById(R.id.btn_update);
+//
+//                // set text on edit text
+//                editText.setText(d.getTicker());
+//
+//                btUpdate.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        // dismiss dialog
+//                        dialog.dismiss();
+//
+//                        //get update text from edit text
+//                        String newTicker = editText.getText().toString().trim();
+//                        d.setTicker(newTicker);
+//
+//                        notifyDataSetChanged();
+//                    }
+//                });
+//            }
+//        });
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +119,8 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
 
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, dataList.size());
+                                Intent intent = new Intent("delete");
+                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -124,7 +132,7 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
                 // Creating dialog box
                 AlertDialog alert = builder.create();
                 // Setting the title manually
-                alert.setTitle("DeleteConfirmation");
+                alert.setTitle("Delete Confirmation");
                 alert.show();
             }
         });
@@ -138,15 +146,15 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTicker, textViewReturns, textViewVolatility;
-        ImageView btnEdit, btnDelete;
+        ImageView btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // Assign variable
+
             textViewTicker = itemView.findViewById(R.id.text_view_ticker);
             textViewReturns = itemView.findViewById(R.id.text_view_returns);
             textViewVolatility = itemView.findViewById(R.id.text_view_volatility);
-            btnEdit = itemView.findViewById(R.id.btn_edit);
             btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }

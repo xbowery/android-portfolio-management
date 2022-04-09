@@ -17,24 +17,28 @@
             android:id="@+id/edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="0.75"
-            android:hint="Enter Ticker"
-            android:padding="12dp" />
+            android:hint="@string/enter_ticker_hint"
+            android:inputType="textNoSuggestions"
+            android:padding="12dp"
+            android:singleLine="true" />
 
         <Button
             android:id="@+id/btn_add"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:layout_weight="0.25"
-            android:text="Add" />
+            android:text="@string/add" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
@@ -50,17 +54,19 @@
             android:id="@+id/btn_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:text="Download" />
+            android:text="@string/download" />
 
         <Button
             android:id="@+id/btn_calculate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
-            android:text="Calculate" />
+            android:text="@string/calculate" />
     </LinearLayout>
 
     <Button
@@ -68,5 +74,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Clear All" />
+        android:text="@string/clear_all" />
 </LinearLayout>

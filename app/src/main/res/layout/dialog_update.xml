@@ -8,19 +8,21 @@
     >
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/edit_text"
-        android:hint="Enter text"
-        android:padding="12dp"
-        android:lines="4"
-        android:gravity="center"/>
-    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/enter_ticker_hint"
+        android:inputType="textNoSuggestions"
+        android:lines="4"
+        android:padding="12dp" />
+
+    <Button
         android:id="@+id/btn_update"
-        android:text="Update"
-        android:layout_marginTop="8dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/update" />
 
 
 </LinearLayout>

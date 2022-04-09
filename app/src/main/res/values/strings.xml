@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CS205 Asgn 3</string>
+    <string name="app_name">Portfolio Management</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -10,4 +10,13 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title">Performance Portfolio Management</string>
     <string name="title_activity_main">activity_main</string>
+
+    <string name="annualised_return">Annualised Returns:</string>
+    <string name="annualised_volatility">Annualised Volatility:</string>
+    <string name="enter_ticker_hint">Enter Ticker</string>
+    <string name="add">Add</string>
+    <string name="download">Download</string>
+    <string name="calculate">Calculate</string>
+    <string name="clear_all">Clear All</string>
+    <string name="update">Update</string>
 </resources>

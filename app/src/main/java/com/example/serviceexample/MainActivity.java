@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         btnDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnReset.setEnabled(false);
+                btnDownload.setEnabled(false);
+                btnCalculate.setEnabled(false);
                 Intent intent = new Intent(getApplicationContext(), DownloadService.class);
                 intent.putParcelableArrayListExtra("tickers", dataList);
                 startService(intent);
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         btnCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnDownload.setEnabled(false);
+                btnCalculate.setEnabled(false);
                 Intent intent = new Intent(getApplicationContext(), CalculateService.class);
                 intent.putParcelableArrayListExtra("tickers", dataList);
                 startService(intent);
@@ -80,15 +86,35 @@ public class MainActivity extends AppCompatActivity {
                 if (!sText.equals("")) {
                     Ticker ticker = new Ticker(sText);
 
-                    // clear
+                    // Clear the text field
                     editText.setText("");
 
-                    dataList.add(ticker);
-                    tickerAdapter.notifyDataSetChanged();
+                    // Add ticker if it does not exists
+                    if (!dataList.contains(ticker)) {
+                        dataList.add(ticker);
+                        tickerAdapter.notifyDataSetChanged();
+                    }
+                    // Display alert if ticker already exists
+                    else {
+                        builder = new AlertDialog.Builder(MainActivity.this);
+                        // Setting message manually and performing action on button click
+                        builder.setMessage("Ticker " + sText + " already exists!")
+                                .setCancelable(false)
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        // Creating dialog box
+                        AlertDialog alert = builder.create();
+                        // Setting the title manually
+                        alert.setTitle("Duplicate");
+                        alert.show();
+                    }
 
                 } else {
                     builder = new AlertDialog.Builder(MainActivity.this);
-                    //Setting message manually and performing action on button click
+                    // Setting message manually and performing action on button click
                     builder.setMessage("The text field must not be empty!!")
                             .setCancelable(false)
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -96,11 +122,16 @@ public class MainActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             });
-                    //Creating dialog box
+                    // Creating dialog box
                     AlertDialog alert = builder.create();
-                    //Setting the title manually
+                    // Setting the title manually
                     alert.setTitle("InvalidActionAlert");
                     alert.show();
+                }
+
+                // Disable add button if maximum size of list reached
+                if (dataList.size() == 5) {
+                    btnAdd.setEnabled(false);
                 }
             }
         });
@@ -109,14 +140,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 builder = new AlertDialog.Builder(v.getContext());
-                //Setting message manually and performing action on button click
-                builder.setMessage("Are you sure you want to delete all your todos?")
+                // Setting message manually and performing action on button click
+                builder.setMessage("Are you sure you want to delete all your tickers?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-
                                 dataList.clear();
                                 tickerAdapter.notifyDataSetChanged();
+
+                                // Enable add button since list in empty
+                                btnAdd.setEnabled(true);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -125,37 +158,75 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.cancel();
                             }
                         });
-                //Creating dialog box
+                // Creating dialog box
                 AlertDialog alert = builder.create();
-                //Setting the title manually
-                alert.setTitle("ResetConfirmation");
+                // Setting the title manually
+                alert.setTitle("Reset Confirmation");
                 alert.show();
-
             }
         });
     }
 
-    private BroadcastReceiver bReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver calcReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<Ticker> received = intent.getParcelableArrayListExtra("tickers");
-            for (int i = 0; i < dataList.size(); i++) {
-                dataList.get(i).setAnnualisedReturn(received.get(i).getAnnualisedReturn());
-                dataList.get(i).setAnnualisedVolatility(received.get(i).getAnnualisedVolatility());
+            for (Ticker ticker : received) {
+                int index = dataList.indexOf(ticker);
+                if (index == -1) {
+                    continue;
+                }
+                dataList.get(index).setAnnualisedReturn(ticker.getAnnualisedReturn());
+                dataList.get(index).setAnnualisedVolatility(ticker.getAnnualisedVolatility());
+                dataList.get(index).setCalculated(ticker.isCalculated());
             }
             tickerAdapter.notifyDataSetChanged();
+            btnDownload.setEnabled(true);
+            btnCalculate.setEnabled(true);
+            btnReset.setEnabled(true);
+        }
+    };
+
+    private BroadcastReceiver deleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            btnAdd.setEnabled(true);
+        }
+    };
+
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ArrayList<Ticker> received = intent.getParcelableArrayListExtra("tickers");
+            for (Ticker ticker : received) {
+                int index = dataList.indexOf(ticker);
+                Log.v("index", String.valueOf(index));
+                if (index == -1) {
+                    continue;
+                }
+                Log.v("valid", String.valueOf(ticker.isValid()));
+                dataList.get(index).setValid(ticker.isValid());
+            }
+            tickerAdapter.notifyDataSetChanged();
+            btnDownload.setEnabled(true);
+            btnCalculate.setEnabled(true);
+            btnReset.setEnabled(true);
         }
     };
 
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(bReceiver, new IntentFilter("calculation"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(calcReceiver, new IntentFilter("calculation"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(deleteReceiver, new IntentFilter("delete"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(downloadReceiver, new IntentFilter("download"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(bReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(calcReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(deleteReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
     }
 }
