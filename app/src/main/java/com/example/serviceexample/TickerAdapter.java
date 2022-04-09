@@ -110,7 +110,7 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
             public void onClick(View v) {
                 builder = new AlertDialog.Builder(v.getContext());
                 // Setting message manually and performing action on button click
-                builder.setMessage("Are you sure you want to delete this task?")
+                builder.setMessage("Are you sure you want to delete this ticker?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
