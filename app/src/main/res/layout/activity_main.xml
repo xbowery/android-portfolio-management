@@ -23,7 +23,8 @@
             android:hint="@string/enter_ticker_hint"
             android:inputType="textNoSuggestions"
             android:padding="12dp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:importantForAutofill="no" />
 
         <Button
             android:id="@+id/btn_add"
