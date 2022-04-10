@@ -57,54 +57,6 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
         holder.textViewReturns.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedReturn()) : "-");
         holder.textViewVolatility.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedVolatility()) : "-");
 
-//        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // init main data
-//                Ticker d = dataList.get(holder.getAdapterPosition());
-//
-//                // create dialog
-//                Dialog dialog = new Dialog(context);
-//
-//                // set content view
-//                dialog.setContentView(R.layout.dialog_update);
-//
-//                // init width
-//                int width = WindowManager.LayoutParams.MATCH_PARENT;
-//
-//                // int height
-//                int height = WindowManager.LayoutParams.WRAP_CONTENT;
-//
-//                // set layout
-//                dialog.getWindow().setLayout(width, height);
-//
-//                // show dialog
-//                dialog.show();
-//
-//                // init and assign variable
-//                EditText editText = dialog.findViewById(R.id.edit_text);
-//                Button btUpdate = dialog.findViewById(R.id.btn_update);
-//
-//                // set text on edit text
-//                editText.setText(d.getTicker());
-//
-//                btUpdate.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        // dismiss dialog
-//                        dialog.dismiss();
-//
-//                        //get update text from edit text
-//                        String newTicker = editText.getText().toString().trim();
-//                        d.setTicker(newTicker);
-//
-//                        notifyDataSetChanged();
-//                    }
-//                });
-//            }
-//        });
-
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

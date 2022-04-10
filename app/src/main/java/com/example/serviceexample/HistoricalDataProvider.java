@@ -84,7 +84,7 @@ public class HistoricalDataProvider extends ContentProvider {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         // create db if not exists
         db = dbHelper.getWritableDatabase();
-        return (db == null) ? false : true;
+        return db != null;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class HistoricalDataProvider extends ContentProvider {
             default:
         }
 
-        if (sortOrder == null || sortOrder == "") {
+        if (sortOrder == null || sortOrder.equals("")) {
             sortOrder = ID;
         }
 

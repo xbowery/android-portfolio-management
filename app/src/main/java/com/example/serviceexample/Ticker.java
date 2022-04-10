@@ -4,31 +4,22 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Ticker implements Parcelable {
-    private String ticker;
+    private final String ticker;
     private double annualisedReturn;
     private double annualisedVolatility;
     private boolean isValid = true;
     private boolean isCalculated;
 
-    public Ticker() {
-    }
-
     public Ticker(String ticker) {
         this.ticker = ticker;
-    }
-
-    public Ticker(String ticker, double annualisedReturn, double annualisedVolatility) {
-        this.ticker = ticker;
-        this.annualisedReturn = annualisedReturn;
-        this.annualisedVolatility = annualisedVolatility;
     }
 
     protected Ticker(Parcel in) {
         ticker = in.readString();
         annualisedReturn = in.readDouble();
         annualisedVolatility = in.readDouble();
-        isValid = in.readBoolean();
-        isCalculated = in.readBoolean();
+        isValid = in.readInt() != 0;
+        isCalculated = in.readInt() != 0;
     }
 
     public static final Creator<Ticker> CREATOR = new Creator<Ticker>() {
@@ -53,16 +44,12 @@ public class Ticker implements Parcelable {
         parcel.writeString(ticker);
         parcel.writeDouble(annualisedReturn);
         parcel.writeDouble(annualisedVolatility);
-        parcel.writeBoolean(isValid);
-        parcel.writeBoolean(isCalculated);
+        parcel.writeInt(isValid ? 1 : 0);
+        parcel.writeInt(isCalculated ? 1 : 0);
     }
 
     public String getTicker() {
         return ticker;
-    }
-
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
     }
 
     public double getAnnualisedReturn() {
