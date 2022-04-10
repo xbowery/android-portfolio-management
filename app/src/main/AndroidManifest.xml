@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.serviceexample">
+    package="com.cs205.g2t5.portfolio_management">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -8,7 +8,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Portfolio Management"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ServiceExample">
@@ -27,7 +27,7 @@
 
         <provider
             android:name=".HistoricalDataProvider"
-            android:authorities="com.example.serviceexample.HistoricalDataProvider"
+            android:authorities="com.cs205.g2t5.portfolio_management.HistoricalDataProvider"
             android:enabled="true"
             android:exported="false" />
     </application>
