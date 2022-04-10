@@ -17,6 +17,13 @@ import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 
+/**
+ * Data Provider by performing the connection to the SQLite database and obtaining data from
+ * it. The code are mostly unedited from the sample code provided.
+ *
+ * Prominent changes include changing the fields which we deemed are essential to be stored,
+ * such as ticker name, opening and closing stock prices.
+ */
 public class HistoricalDataProvider extends ContentProvider {
     static final String PROVIDER_NAME = "com.cs205.g2t5.portfolio_management.HistoricalDataProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/history";

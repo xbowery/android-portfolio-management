@@ -25,7 +25,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-
+/**
+ * DownloadService is a Service that is ran on a separate thread. It downloads data over the
+ * network from the Finnhub API and saves it to the SQLite database.
+ *
+ * Refer to HistoricalDataProvider for more information on how the database is structured.
+ * Upon completion, a broadcast will be sent to the Main Activity for the UI to be updated.
+ */
 public class DownloadService extends Service {
     private ServiceHandler serviceHandler;
 
@@ -142,7 +148,7 @@ public class DownloadService extends Service {
 
     @Override
     public void onCreate() {
-
+        // Runs on a separate thread to prevent blocking UI thread
         HandlerThread thread = new HandlerThread("DownloadService", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
         Looper serviceLooper = thread.getLooper();

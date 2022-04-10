@@ -6,6 +6,10 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Splash screen which acts as an Activity which is shown before the Main Activity
+ * screen is shown to the user.
+ */
 public class Splash extends AppCompatActivity {
     public final int SPLASH_TIME = 2500;
 

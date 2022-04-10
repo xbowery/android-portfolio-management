@@ -18,6 +18,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CalculateService is a Service that is ran on a separate thread. It mainly handles the
+ * calculation of the Annualized Returns and Annualized Volatility according to the
+ * specifications as described in the requirements of this Assignment.
+ *
+ * It queries the SQLite database using the ContentResolver. After completion, this service
+ * will perform a broadcast to the Main Activity to inform it of its completion and terminate
+ * itself.
+ *
+ * Any ticker which are invalid (determined during downloading of data) will be ignored.
+ */
 public class CalculateService extends Service {
     private CalculationHandler calculationHandler;
     private ArrayList<Ticker> tickers;
@@ -101,6 +112,7 @@ public class CalculateService extends Service {
 
     @Override
     public void onCreate() {
+        // Runs on a separate worker thread to avoid blocking main UI thread
         HandlerThread thread = new HandlerThread("CalculateService", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
         Looper serviceLooper = thread.getLooper();

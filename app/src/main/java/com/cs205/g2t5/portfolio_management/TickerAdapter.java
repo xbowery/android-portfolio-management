@@ -16,6 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * TickerAdapter allows for a nice view adapter to showcase the list of tickers on
+ * the main UI screen.
+ */
 public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder> {
     //initialize variables
 
@@ -28,7 +32,6 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
     public TickerAdapter(List<Ticker> dataList, Activity context) {
         this.dataList = dataList;
         this.context = context;
-        //notifyDataSetChanged();
     }
 
     @NonNull

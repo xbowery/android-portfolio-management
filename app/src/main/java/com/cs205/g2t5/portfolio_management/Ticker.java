@@ -3,6 +3,16 @@ package com.cs205.g2t5.portfolio_management;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Ticker class which holds the important stock information.
+ *
+ * These data will be populated and changed accordingly whenever there is a "Download"
+ * or "Calculate" operation.
+ *
+ * A custom equals() and hashCode() function is implemented to compare tickers which have
+ * the same ticker name as equal. Note that all tickers are stored and transformed to uppercase
+ * by default.
+ */
 public class Ticker implements Parcelable {
     private final String ticker;
     private double annualisedReturn;

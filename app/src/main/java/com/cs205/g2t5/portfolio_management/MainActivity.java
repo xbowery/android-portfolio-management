@@ -53,6 +53,17 @@ public class MainActivity extends AppCompatActivity {
         // set adapter
         recyclerView.setAdapter(tickerAdapter);
 
+        /*
+         @brief when the "Download" button is clicked
+
+         To prevent calculation and clearing of the ticker list when the data
+         is being downloaded, the 3 buttons will be disabled to prevent multiple
+         continuous clicks. However, the download will happen in another background
+         Service using the data passed to it using the Intent. See DownloadService.
+
+         This download will run on a separate thread and will not block the UI thread.
+         Users can still scroll up and down to check their old ticker data.
+         */
         btnDownload.setOnClickListener(v -> {
             btnReset.setEnabled(false);
             btnDownload.setEnabled(false);
@@ -62,6 +73,15 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         });
 
+        /*
+        @brief when the "Calculate" button is clicked
+
+        When calculating, the Download and Calculate buttons are disabled momentarily
+        so that Users cannot click on them multiple times while the background Service
+        is still running.
+
+        A Service is started to calculate the data. See CalculateService.
+         */
         btnCalculate.setOnClickListener(v -> {
             btnDownload.setEnabled(false);
             btnCalculate.setEnabled(false);
@@ -70,6 +90,18 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         });
 
+        /*
+        @brief when the "Add" button is clicked
+
+        Simply retrieves the text in the text field and add it to the ArrayList
+        of tickers if the ticker is not present. Will perform comparison using
+        uppercase ticker names.
+
+        For displaying, the TickerAdapter will be notified of an update and will
+        render the component as usual.
+
+        The maximum number of tickers that can be added is 5 as per requirements.
+         */
         btnAdd.setOnClickListener(v -> {
             // get string from edit text
             String sText = editText.getText().toString().trim().toUpperCase();
@@ -117,6 +149,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        @brief when the "Clear All" button is clicked
+
+        A new dialog box will pop up to warn the user before attempting to clear
+        the ArrayList of tickers. It will then update the TickerAdapter to re-render
+        the updated view on the main UI thread.
+         */
         btnReset.setOnClickListener(v -> {
             builder = new AlertDialog.Builder(v.getContext());
             // Setting message manually and performing action on button click
@@ -141,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Broadcast receiver to handle updates from the calculateService. It will update the
+    view data on the main UI thread using the new updated Ticker data after calculation.
+     */
     private final BroadcastReceiver calcReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -161,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /*
+    Broadcast receiver to handle updates after deletion confirmation.
+    */
     private final BroadcastReceiver deleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,6 +214,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /*
+    Broadcast receiver to handle updates after download is completed.
+
+    It will retrieve the updated Ticker data through an Intent and will re-enable the
+    use of the 3 buttons afterwards. For invalid tickers (from the API), the ticker will
+    be highlighted red and will be shown as "Invalid". Calculations will be skipped for
+    invalid tickers.
+     */
     private final BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
