@@ -3,6 +3,7 @@ package com.cs205.g2t5.portfolio_management;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 /**
  * DownloadService is a Service that is ran on a separate thread. It downloads data over the
  * network from the Finnhub API and saves it to the SQLite database.
- *
+ * <p>
  * Refer to HistoricalDataProvider for more information on how the database is structured.
  * Upon completion, a broadcast will be sent to the Main Activity for the UI to be updated.
  */
@@ -48,13 +49,23 @@ public class DownloadService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-
             for (int i = 0; i < tickers.size(); i++) {
                 String result;
                 String inputLine;
-                /*
-                 url to get historical data, put your own token
-                */
+
+                Cursor cursor = getContentResolver().query(HistoricalDataProvider.CONTENT_URI, new String[]{HistoricalDataProvider.OPEN, HistoricalDataProvider.CLOSE},
+                        "ticker=?", new String[]{String.valueOf(tickers.get(i).getTicker())}, null);
+
+                // Check if record exists and skip if there are 128 records
+                if (cursor.getCount() == 128) {
+                    continue;
+                }
+
+                // Deletes all records based on ticker name
+                getContentResolver().delete(HistoricalDataProvider.CONTENT_URI, "ticker=?", new String[]{tickers.get(i).getTicker()});
+
+
+                // url to get historical data, put your own token
                 String token = getString(R.string.token);
                 String stringUrl = getString(R.string.api_url, tickers.get(i).getTicker(), token);
 
@@ -115,7 +126,6 @@ public class DownloadService extends Service {
                 Log.i("open", String.valueOf(jsonArrayOpen.length()));
                 Log.v("close", String.valueOf(jsonArrayClose.length()));
 
-                getContentResolver().delete(HistoricalDataProvider.CONTENT_URI, "ticker=?", new String[]{tickers.get(i).getTicker()});
 
                 try {
                     for (int j = 0; j < jsonArrayClose.length(); j++) {
