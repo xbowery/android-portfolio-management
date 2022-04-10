@@ -2,7 +2,6 @@ package com.example.serviceexample;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -20,8 +19,8 @@ import java.util.List;
 public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder> {
     //initialize variables
 
-    private List<Ticker> dataList;
-    private Activity context;
+    private final List<Ticker> dataList;
+    private final Activity context;
 
     AlertDialog.Builder builder;
 
@@ -50,43 +49,37 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
             holder.textViewTicker.setText(data.getTicker());
             holder.textViewTicker.setTextColor(Color.BLACK);
         } else {
-            holder.textViewTicker.setText(data.getTicker() + " (Invalid)");
+            String invalidText = data.getTicker() + " (Invalid)";
+            holder.textViewTicker.setText(invalidText);
             holder.textViewTicker.setTextColor(Color.RED);
         }
 
-        holder.textViewReturns.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedReturn()) : "-");
-        holder.textViewVolatility.setText(data.isCalculated() ? String.format("%.1f%%", data.getAnnualisedVolatility()) : "-");
+        holder.textViewReturns.setText(data.isCalculated() ? context.getString(R.string.percentage_format, data.getAnnualisedReturn()) : "-");
+        holder.textViewVolatility.setText(data.isCalculated() ? context.getString(R.string.percentage_format, data.getAnnualisedVolatility()) : "-");
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder = new AlertDialog.Builder(v.getContext());
-                // Setting message manually and performing action on button click
-                builder.setMessage("Are you sure you want to delete this ticker?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                int position = holder.getAdapterPosition();
-                                dataList.remove(position);
+        holder.btnDelete.setOnClickListener(v -> {
+            builder = new AlertDialog.Builder(v.getContext());
+            // Setting message manually and performing action on button click
+            builder.setMessage("Are you sure you want to delete this ticker?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        int position1 = holder.getAdapterPosition();
+                        dataList.remove(position1);
 
-                                notifyItemRemoved(position);
-                                notifyItemRangeChanged(position, dataList.size());
-                                Intent intent = new Intent("delete");
-                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //  Action for 'NO' Button
-                                dialog.cancel();
-                            }
-                        });
-                // Creating dialog box
-                AlertDialog alert = builder.create();
-                // Setting the title manually
-                alert.setTitle("Delete Confirmation");
-                alert.show();
-            }
+                        notifyItemRemoved(position1);
+                        notifyItemRangeChanged(position1, dataList.size());
+                        Intent intent = new Intent("delete");
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    })
+                    .setNegativeButton("No", (dialog, id) -> {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                    });
+            // Creating dialog box
+            AlertDialog alert = builder.create();
+            // Setting the title manually
+            alert.setTitle("Delete Confirmation");
+            alert.show();
         });
 
     }
@@ -96,7 +89,7 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
         return dataList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTicker, textViewReturns, textViewVolatility;
         ImageView btnDelete;
 
