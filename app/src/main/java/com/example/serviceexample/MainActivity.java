@@ -3,12 +3,10 @@ package com.example.serviceexample;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -55,119 +53,95 @@ public class MainActivity extends AppCompatActivity {
         // set adapter
         recyclerView.setAdapter(tickerAdapter);
 
-        btnDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnReset.setEnabled(false);
-                btnDownload.setEnabled(false);
-                btnCalculate.setEnabled(false);
-                Intent intent = new Intent(getApplicationContext(), DownloadService.class);
-                intent.putParcelableArrayListExtra("tickers", dataList);
-                startService(intent);
-            }
+        btnDownload.setOnClickListener(v -> {
+            btnReset.setEnabled(false);
+            btnDownload.setEnabled(false);
+            btnCalculate.setEnabled(false);
+            Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+            intent.putParcelableArrayListExtra("tickers", dataList);
+            startService(intent);
         });
 
-        btnCalculate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnDownload.setEnabled(false);
-                btnCalculate.setEnabled(false);
-                Intent intent = new Intent(getApplicationContext(), CalculateService.class);
-                intent.putParcelableArrayListExtra("tickers", dataList);
-                startService(intent);
-            }
+        btnCalculate.setOnClickListener(v -> {
+            btnDownload.setEnabled(false);
+            btnCalculate.setEnabled(false);
+            Intent intent = new Intent(getApplicationContext(), CalculateService.class);
+            intent.putParcelableArrayListExtra("tickers", dataList);
+            startService(intent);
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // get string from edit text
-                String sText = editText.getText().toString().trim();
-                if (!sText.equals("")) {
-                    Ticker ticker = new Ticker(sText);
+        btnAdd.setOnClickListener(v -> {
+            // get string from edit text
+            String sText = editText.getText().toString().trim();
+            if (!sText.equals("")) {
+                Ticker ticker = new Ticker(sText);
 
-                    // Clear the text field
-                    editText.setText("");
+                // Clear the text field
+                editText.setText("");
 
-                    // Add ticker if it does not exists
-                    if (!dataList.contains(ticker)) {
-                        dataList.add(ticker);
-                        tickerAdapter.notifyDataSetChanged();
-                    }
-                    // Display alert if ticker already exists
-                    else {
-                        builder = new AlertDialog.Builder(MainActivity.this);
-                        // Setting message manually and performing action on button click
-                        builder.setMessage("Ticker " + sText + " already exists!")
-                                .setCancelable(false)
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        // Creating dialog box
-                        AlertDialog alert = builder.create();
-                        // Setting the title manually
-                        alert.setTitle("Duplicate");
-                        alert.show();
-                    }
-
-                } else {
+                // Add ticker if it does not exists
+                if (!dataList.contains(ticker)) {
+                    dataList.add(ticker);
+                    tickerAdapter.notifyDataSetChanged();
+                }
+                // Display alert if ticker already exists
+                else {
                     builder = new AlertDialog.Builder(MainActivity.this);
                     // Setting message manually and performing action on button click
-                    builder.setMessage("The text field must not be empty!!")
+                    builder.setMessage("Ticker " + sText + " already exists!")
                             .setCancelable(false)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            .setPositiveButton("Ok", (dialog, id) -> dialog.cancel());
                     // Creating dialog box
                     AlertDialog alert = builder.create();
                     // Setting the title manually
-                    alert.setTitle("InvalidActionAlert");
+                    alert.setTitle("Duplicate");
                     alert.show();
                 }
 
-                // Disable add button if maximum size of list reached
-                if (dataList.size() == 5) {
-                    btnAdd.setEnabled(false);
-                }
-            }
-        });
-
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder = new AlertDialog.Builder(v.getContext());
+            } else {
+                builder = new AlertDialog.Builder(MainActivity.this);
                 // Setting message manually and performing action on button click
-                builder.setMessage("Are you sure you want to delete all your tickers?")
+                builder.setMessage("The text field must not be empty!!")
                         .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dataList.clear();
-                                tickerAdapter.notifyDataSetChanged();
-
-                                // Enable add button since list in empty
-                                btnAdd.setEnabled(true);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //  Action for 'NO' Button
-                                dialog.cancel();
-                            }
-                        });
+                        .setPositiveButton("Ok", (dialog, id) -> dialog.cancel());
                 // Creating dialog box
                 AlertDialog alert = builder.create();
                 // Setting the title manually
-                alert.setTitle("Reset Confirmation");
+                alert.setTitle("InvalidActionAlert");
                 alert.show();
             }
+
+            // Disable add button if maximum size of list reached
+            if (dataList.size() == 5) {
+                btnAdd.setEnabled(false);
+            }
+        });
+
+        btnReset.setOnClickListener(v -> {
+            builder = new AlertDialog.Builder(v.getContext());
+            // Setting message manually and performing action on button click
+            builder.setMessage("Are you sure you want to delete all your tickers?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        dataList.clear();
+                        tickerAdapter.notifyDataSetChanged();
+
+                        // Enable add button since list in empty
+                        btnAdd.setEnabled(true);
+                    })
+                    .setNegativeButton("No", (dialog, id) -> {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                    });
+            // Creating dialog box
+            AlertDialog alert = builder.create();
+            // Setting the title manually
+            alert.setTitle("Reset Confirmation");
+            alert.show();
         });
     }
 
-    private BroadcastReceiver calcReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver calcReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<Ticker> received = intent.getParcelableArrayListExtra("tickers");
@@ -187,14 +161,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private BroadcastReceiver deleteReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver deleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             btnAdd.setEnabled(true);
         }
     };
 
-    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<Ticker> received = intent.getParcelableArrayListExtra("tickers");
