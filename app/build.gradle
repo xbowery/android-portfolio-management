@@ -7,8 +7,8 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.serviceexample"
-        minSdkVersion 30
+        applicationId "com.cs205.g2t5.portfolio_management"
+        minSdkVersion 16
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"

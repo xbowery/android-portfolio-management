@@ -1,4 +1,4 @@
-package com.example.serviceexample;
+package com.cs205.g2t5.portfolio_management;
 
 import org.junit.Test;
 

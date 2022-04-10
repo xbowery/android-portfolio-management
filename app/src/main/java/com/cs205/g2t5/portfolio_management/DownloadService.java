@@ -1,4 +1,4 @@
-package com.example.serviceexample;
+package com.cs205.g2t5.portfolio_management;
 
 import android.app.Service;
 import android.content.ContentValues;
@@ -25,9 +25,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-
+/**
+ * DownloadService is a Service that is ran on a separate thread. It downloads data over the
+ * network from the Finnhub API and saves it to the SQLite database.
+ *
+ * Refer to HistoricalDataProvider for more information on how the database is structured.
+ * Upon completion, a broadcast will be sent to the Main Activity for the UI to be updated.
+ */
 public class DownloadService extends Service {
-    private Looper serviceLooper;
     private ServiceHandler serviceHandler;
 
     private static final String REQUEST_METHOD = "GET";
@@ -35,7 +40,6 @@ public class DownloadService extends Service {
     private static final int CONNECTION_TIMEOUT = 15000;
 
     private ArrayList<Ticker> tickers;
-    private String token = "c8so24qad3ifkeaobkjg"; // put your own token
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -44,18 +48,18 @@ public class DownloadService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            String result;
-            String inputLine;
 
             for (int i = 0; i < tickers.size(); i++) {
-                // url to get historical data
-                String stringUrl = "https://finnhub.io/api/v1/stock/candle?symbol=" + tickers.get(i).getTicker()
-                        + "&resolution=D&from=1625097601&to=1640995199&token=" + token;
+                String result;
+                String inputLine;
+                /*
+                 url to get historical data, put your own token
+                */
+                String token = getString(R.string.token);
+                String stringUrl = getString(R.string.api_url, tickers.get(i).getTicker(), token);
 
                 try {
-
                     // make GET requests
-
                     URL myUrl = new URL(stringUrl);
                     HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
 
@@ -66,7 +70,6 @@ public class DownloadService extends Service {
                     connection.connect();
 
                     // store json string from GET response
-
                     InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
                     BufferedReader reader = new BufferedReader(streamReader);
                     StringBuilder stringBuilder = new StringBuilder();
@@ -82,13 +85,13 @@ public class DownloadService extends Service {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    result = null;
                     Thread.currentThread().interrupt();
+                    break;
                 }
 
                 // parse the json string into 'open' and 'close' array
 
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 JSONArray jsonArrayOpen = null;
                 JSONArray jsonArrayClose = null;
 
@@ -105,6 +108,10 @@ public class DownloadService extends Service {
                     e.printStackTrace();
                 }
 
+                if (jsonArrayClose == null) {
+                    break;
+                }
+
                 Log.i("open", String.valueOf(jsonArrayOpen.length()));
                 Log.v("close", String.valueOf(jsonArrayClose.length()));
 
@@ -114,7 +121,6 @@ public class DownloadService extends Service {
                     for (int j = 0; j < jsonArrayClose.length(); j++) {
                         double open = jsonArrayOpen.getDouble(j);
                         double close = jsonArrayClose.getDouble(j);
-                        // Log.v("data", ticker + ":, o: " + open  + " c: " + close);
 
                         ContentValues values = new ContentValues();
                         values.put(HistoricalDataProvider.TICKER, tickers.get(i).getTicker());
@@ -142,10 +148,10 @@ public class DownloadService extends Service {
 
     @Override
     public void onCreate() {
-
-        HandlerThread thread = new HandlerThread("Service", Process.THREAD_PRIORITY_BACKGROUND);
+        // Runs on a separate thread to prevent blocking UI thread
+        HandlerThread thread = new HandlerThread("DownloadService", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
-        serviceLooper = thread.getLooper();
+        Looper serviceLooper = thread.getLooper();
         serviceHandler = new ServiceHandler(serviceLooper);
     }
 

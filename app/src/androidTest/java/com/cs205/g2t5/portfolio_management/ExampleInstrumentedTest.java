@@ -1,4 +1,4 @@
-package com.example.serviceexample;
+package com.cs205.g2t5.portfolio_management;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.serviceexample", appContext.getPackageName());
+        assertEquals("com.cs205.g2t5.portfolio_management", appContext.getPackageName());
     }
 }
