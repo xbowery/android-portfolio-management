@@ -19,6 +19,11 @@
         <entry key="..\:/Users/jerom/StudioProjects/cs205-asgn3/app/src/main/res/layout/list_row_main.xml" value="0.1" />
         <entry key="..\:/Users/jerom/StudioProjects/cs205-asgn3/app/src/main/res/layout/list_row_main2.xml" value="0.28177083333333336" />
         <entry key="..\:/Users/jerom/StudioProjects/cs205-asgn3/app/src/main/res/menu/menu_main.xml" value="0.2828125" />
+        <entry key="app/src/main/res/drawable/ic_edit.xml" value="0.237" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.23177083333333334" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.23177083333333334" />
+        <entry key="app/src/main/res/layout/dialog_update.xml" value="0.23177083333333334" />
+        <entry key="app/src/main/res/layout/list_row_main.xml" value="0.23177083333333334" />
       </map>
     </option>
   </component>

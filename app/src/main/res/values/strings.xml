@@ -19,4 +19,7 @@
     <string name="calculate">Calculate</string>
     <string name="clear_all">Clear All</string>
     <string name="update">Update</string>
+
+    <string name="token">c8so24qad3ifkeaobkjg</string>
+    <string name="api_url">https://finnhub.io/api/v1/stock/candle\?symbol=%1$s&amp;resolution=D&amp;from=1625097601&amp;to=1640995199&amp;token=%2$s</string>
 </resources>

@@ -19,10 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CalculateService extends Service {
-    private Looper serviceLooper;
     private CalculationHandler calculationHandler;
     private ArrayList<Ticker> tickers;
-    private ArrayList<Ticker> returnList = new ArrayList<>();
+    private final ArrayList<Ticker> returnList = new ArrayList<>();
 
     private final class CalculationHandler extends Handler {
         public CalculationHandler(Looper looper) {
@@ -37,14 +36,21 @@ public class CalculateService extends Service {
                     continue;
                 }
 
-                Log.v("Retrieval", ticker.getTicker());
+                Log.v("Retrieving", ticker.getTicker());
                 double sum_growth = 0.0;
                 List<Double> rateList = new ArrayList<>();
 
                 Cursor cursor = getContentResolver().query(CONTENT_URI, new String[]{HistoricalDataProvider.OPEN, HistoricalDataProvider.CLOSE},
                         "ticker=?", new String[]{String.valueOf(ticker.getTicker())}, null);
 
+                if (cursor == null) {
+                    Log.v("Cursor Err", ticker.getTicker());
+                    continue;
+                }
                 int rows = cursor.getCount();
+                if (rows == 0) {
+                    continue;
+                }
 
                 if (cursor.moveToFirst()) {
                     while (!cursor.isAfterLast()) {
@@ -72,13 +78,15 @@ public class CalculateService extends Service {
                 double annualisedReturn = average * 252;
                 double annualisedVolatility = sd * Math.sqrt(252);
 
-                Log.i("Annualised Growth", String.valueOf((int) (annualisedReturn * 100)));
-                Log.i("Annualised Volatility", String.valueOf((int) (annualisedVolatility * 100)));
+                Log.i("Annualised Growth", String.valueOf(annualisedReturn * 100));
+                Log.i("Annualised Volatility", String.valueOf(annualisedVolatility * 100));
 
                 ticker.setAnnualisedReturn(annualisedReturn * 100);
                 ticker.setAnnualisedVolatility(annualisedVolatility * 100);
                 ticker.setCalculated(true);
+
                 returnList.add(ticker);
+                cursor.close();
             }
             sendBroadcast();
             stopSelf(msg.arg1);
@@ -93,9 +101,9 @@ public class CalculateService extends Service {
 
     @Override
     public void onCreate() {
-        HandlerThread thread = new HandlerThread("Service2", Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread thread = new HandlerThread("CalculateService", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
-        serviceLooper = thread.getLooper();
+        Looper serviceLooper = thread.getLooper();
         calculationHandler = new CalculationHandler(serviceLooper);
     }
 

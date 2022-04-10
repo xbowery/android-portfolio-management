@@ -17,7 +17,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -29,16 +28,8 @@
         <provider
             android:name=".HistoricalDataProvider"
             android:authorities="com.example.serviceexample.HistoricalDataProvider"
-            android:enabled="true" />
-
-        <!--        <receiver-->
-        <!--            android:name=".CalculateBroadcastReceiver"-->
-        <!--            android:exported="false"-->
-        <!--            tools:ignore="Instantiatable">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="DOWNLOAD_COMPLETE" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
