@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnAdd.setOnClickListener(v -> {
             // get string from edit text
-            String sText = editText.getText().toString().trim();
+            String sText = editText.getText().toString().trim().toUpperCase();
             if (!sText.equals("")) {
                 Ticker ticker = new Ticker(sText);
 
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 // Add ticker if it does not exists
                 if (!dataList.contains(ticker)) {
                     dataList.add(ticker);
-                    tickerAdapter.notifyDataSetChanged();
+                    tickerAdapter.notifyItemInserted(tickerAdapter.getItemCount());
                 }
                 // Display alert if ticker already exists
                 else {
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Disable add button if maximum size of list reached
-            if (dataList.size() == 5) {
+            if (dataList.size() >= 5) {
                 btnAdd.setEnabled(false);
             }
         });
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, id) -> {
                         dataList.clear();
-                        tickerAdapter.notifyDataSetChanged();
+                        tickerAdapter.notifyItemRangeChanged(0, 5);
 
                         // Enable add button since list in empty
                         btnAdd.setEnabled(true);
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 dataList.get(index).setAnnualisedVolatility(ticker.getAnnualisedVolatility());
                 dataList.get(index).setCalculated(ticker.isCalculated());
             }
-            tickerAdapter.notifyDataSetChanged();
+            tickerAdapter.notifyItemRangeChanged(0, 5);
             btnDownload.setEnabled(true);
             btnCalculate.setEnabled(true);
             btnReset.setEnabled(true);
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("valid", String.valueOf(ticker.isValid()));
                 dataList.get(index).setValid(ticker.isValid());
             }
-            tickerAdapter.notifyDataSetChanged();
+            tickerAdapter.notifyItemRangeChanged(0, 5);
             btnDownload.setEnabled(true);
             btnCalculate.setEnabled(true);
             btnReset.setEnabled(true);

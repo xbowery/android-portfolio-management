@@ -28,7 +28,7 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
     public TickerAdapter(List<Ticker> dataList, Activity context) {
         this.dataList = dataList;
         this.context = context;
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     @NonNull
@@ -96,7 +96,6 @@ public class TickerAdapter extends RecyclerView.Adapter<TickerAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // Assign variable
-
             textViewTicker = itemView.findViewById(R.id.text_view_ticker);
             textViewReturns = itemView.findViewById(R.id.text_view_returns);
             textViewVolatility = itemView.findViewById(R.id.text_view_volatility);
