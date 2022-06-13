@@ -6,6 +6,13 @@
 
 Group Project as part of our Assignment 3 for SMU CS205 - Operating System Concepts with Android
 
+## Table of Contents
+- [Background Information](https://github.com/xbowery/android-portfolio-management#background-information)
+- [Group Members](https://github.com/xbowery/android-portfolio-management#group-members)
+- [Application Description - Application View](https://github.com/xbowery/android-portfolio-management#application-description---application-view)
+- [Overall Navigation Diagram (User Flow)](https://github.com/xbowery/android-portfolio-management#overall-navigation-diagram-user-flow)
+- [Solution Architecture (Design & Overall Android Components)](https://github.com/xbowery/android-portfolio-management#solution-architecture-design--overall-android-components)
+
 ## Background Information
 
 The Portfolio Management application is a standalone Android application that informs users of the various statuses of the stocks based on their tickers.
