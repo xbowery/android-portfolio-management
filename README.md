@@ -17,6 +17,8 @@ Group Project as part of our Assignment 3 for SMU CS205 - Operating System Conce
 
 The Portfolio Management application is a standalone Android application that informs users of the various statuses of the stocks based on their tickers.
 
+A user can input up to a maximum of 5 stock tickers, and retrieve relevant data from [Finnhub](https://finnhub.io) between July 1 2021 00:00:00 to December 31 2021 23:59:59.
+
 If you are running this on an emulator, these are the recommended configurations:
 - Device: Nexus 6P
 - API: Level 30
